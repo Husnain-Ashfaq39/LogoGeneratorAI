@@ -131,12 +131,7 @@ const BACKGROUND_OPTIONS = [
 
 const Footer = () => (
   <div className="flex justify-between items-center mt-4 px-4 max-sm:flex-col">
-    <div className="px-4 py-2 text-sm max-sm:hidden">
-      Powered by{" "}            
-      <Link href="https://dub.sh/nebius" className="text-foreground hover:text-primary transition-colors">
-        Nebius AI
-      </Link>
-    </div>
+    
 
     <div className="px-4 py-2 text-sm">
       Made with ❤️ by{" "}
@@ -151,9 +146,9 @@ const Footer = () => (
 
     <div className="flex gap-4 items-center max-sm:hidden">
       {[
-        { href: "https://git.new/Arindam", Icon: IconBrandGithub },
-        { href: "https://dub.sh/arindam-linkedin", Icon: IconBrandLinkedin },
-        { href: "https://dub.sh/arindam-x", Icon: IconBrandX }
+       
+        { href: "https://www.linkedin.com/company/syntax-ai-dev", Icon: IconBrandLinkedin }
+       
       ].map(({ href, Icon }) => (
         <Link 
           key={href}
