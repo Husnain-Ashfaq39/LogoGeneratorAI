@@ -24,7 +24,7 @@ export default function Faq() {
             </span>
             <br />{" "}
             <span className="text-muted-foreground/40 text-3xl md:text-5xl">
-              about LogoAI
+              about AIdea
             </span>
           </div>
         </div>

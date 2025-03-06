@@ -3,8 +3,7 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 import dedent from 'dedent';
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import { InsertLogo,logosTable,SelectLogo } from '@/db/schema';
+import { InsertLogo, logosTable, SelectLogo } from '@/db/schema';
 import { db } from '@/db';
 import { eq, desc } from 'drizzle-orm';
 import { rateLimit } from '@/lib/upstash';
@@ -13,7 +12,6 @@ const apiKey = process.env.NEBIUS_API_KEY;
 if (!apiKey) {
   throw new Error('NEBIUS_API_KEY is not defined in environment variables');
 }
-
 
 const { HELICONE_API_KEY } = process.env;
 
@@ -53,27 +51,12 @@ const styleLookup: { [key: string]: string } = {
 export async function generateLogo(formData: z.infer<typeof FormSchema>) {
   'use server';
   try {
-    const user = await currentUser();
-    if (!user) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
-    const { success: rateLimitSuccess, remaining } = await rateLimit.limit(user.id);
+    // Generate a random user ID for rate limiting
+    const anonymousUserId = Math.random().toString(36).substring(2, 15);
     
-    await (await clerkClient()).users.updateUserMetadata(user.id, {
-      unsafeMetadata: {
-        remaining,
-      },
-    });
+    const { success: rateLimitSuccess, remaining } = await rateLimit.limit(anonymousUserId);
 
-    console.log("your remaining logo generation limit is", remaining)
-    // if (remaining === 1) {
-    //   await toast({
-    //     title: "Warning",
-    //     description: "You only have 1 logo generation remaining",
-    //     variant: "destructive",
-    //   });
-    // }
+    console.log("your remaining logo generation limit is", remaining);
 
     if (!rateLimitSuccess) {
       return { 
@@ -97,19 +80,20 @@ export async function generateLogo(formData: z.infer<typeof FormSchema>) {
 
     const imageUrl = response.data[0].url || "";
 
-    const DatabaseData: InsertLogo = {
-      image_url: imageUrl,
-      primary_color: validatedData.primaryColor,
-      background_color: validatedData.secondaryColor,
-      username: user.username ?? user.firstName ?? 'Anonymous',
-      userId: user.id,
-    };
-
+    // Try to save to database, but don't fail if database isn't available
     try {
+      const DatabaseData: InsertLogo = {
+        image_url: imageUrl,
+        primary_color: validatedData.primaryColor,
+        background_color: validatedData.secondaryColor,
+        username: 'Anonymous',
+        userId: anonymousUserId,
+      };
+
       await db.insert(logosTable).values(DatabaseData);
     } catch (error) {
       console.error('Error inserting logo into database:', error);
-      throw error;
+      // Don't throw the error, just log it
     }
     
     return { 
@@ -123,27 +107,18 @@ export async function generateLogo(formData: z.infer<typeof FormSchema>) {
 }
 
 export async function checkHistory() {
-  const user = await currentUser();
-
-  if (!user) {
-    return null;
-  }
-
+  // Since we're not using authentication, we'll return all logos
   try {
-    const userLogos = await db
+    const allLogos = await db
       .select()
       .from(logosTable)
-      .where(
-        user.externalId 
-          ? eq(logosTable.userId, user.externalId)
-          : eq(logosTable.userId, user.id)
-      )
-      .orderBy(desc(logosTable.createdAt));
+      .orderBy(desc(logosTable.createdAt))
+      .limit(10); // Limit to recent logos
 
-    return userLogos;
+    return allLogos;
   } catch (error) {
-    console.error('Error fetching user logos:', error);
-    return null;
+    console.error('Error fetching logos:', error);
+    return []; // Return empty array instead of null
   }
 }
 
@@ -155,8 +130,8 @@ export async function allLogos(){
       .orderBy(desc(logosTable.createdAt));
     return allLogos
   }catch(error){
-    console.error('Error fetchiing logos'+error)
-    return null;
+    console.error('Error fetching logos:'+error)
+    return []; // Return empty array instead of null
   }
 }
 

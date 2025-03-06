@@ -1,8 +1,8 @@
-# LogoAI - AI-Powered Logo Generator
+# AIdea - AI-Powered Logo Generator
 
-![LogoAI](./app/opengraph-image.png)
+![AIdea](./app/opengraph-image.png)
 
-[LogoAI](https://www.logoai.in) is a modern web application that leverages artificial intelligence to generate unique, professional logos. Built with Next.js, TypeScript, and powered by Nebius AI, it offers a seamless experience for creating custom logos for businesses and personal brands.
+[AIdea](https://www.AIdea.in) is a modern web application that leverages artificial intelligence to generate unique, professional logos. Built with Next.js, TypeScript, and powered by Nebius AI, it offers a seamless experience for creating custom logos for businesses and personal brands.
 
 ## Features
 
@@ -127,14 +127,14 @@ docker compose logs -f app
 
 ```bash
 # 1. Build the Docker image
-docker build -t logoai .
+docker build -t AIdea .
 
 # 2. Run the container
 docker run -p 3000:3000 \
   -e NEBIUS_API_KEY=$NEBIUS_API_KEY \
   -e NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=$NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY \
   -e CLERK_SECRET_KEY=$CLERK_SECRET_KEY \
-  logoai
+  AIdea
 
 # Check http://localhost:3000
 ```
