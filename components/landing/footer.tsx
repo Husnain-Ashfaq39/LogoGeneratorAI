@@ -56,13 +56,7 @@ export default function Footer() {
               </div>
               <div className="flex gap-4 items-center justify-center">
                 
-                <Link 
-                  href="https://www.linkedin.com/company/syntax-ai-dev" 
-                  target="_blank"
-                  className="hover:text-primary transition-colors"
-                >
-                  <IconBrandLinkedin className="size-5 md:size-8" />
-                </Link>
+             
                 
               </div>
             </div>

@@ -136,7 +136,7 @@ const Footer = () => (
     <div className="px-4 py-2 text-sm">
       Made with ❤️ by{" "}
       <Link 
-        href="https://github.com/arindamcodes" 
+        href="" 
         target="_blank"
         className="text-foreground hover:text-primary transition-colors"
       >
